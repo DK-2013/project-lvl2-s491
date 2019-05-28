@@ -1,0 +1,44 @@
+{
+  "name": "gendiff-dk",
+  "version": "0.0.1",
+  "description": "Viewer difference data structure",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build"
+  },
+  "bin": {
+    "gendiff": "dist/bin/gendiff.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DK-2013/project-lvl2-s491.git"
+  },
+  "keywords": [
+    "traverse",
+    "ast"
+  ],
+  "author": "Dmitry Kizilov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DK-2013/project-lvl2-s491/issues"
+  },
+  "homepage": "https://github.com/DK-2013/project-lvl2-s491#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3"
+  },
+  "dependencies": {
+    "commander": "^2.20.0"
+  }
+}
