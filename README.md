@@ -4,4 +4,4 @@
 ```sh
 $ npm install -g gendiff-dk
 ```
-[![asciicast](https://asciinema.org/a/Hloy69J6AcQDnHOYe9okZTaPF.svg)](https://asciinema.org/a/Hloy69J6AcQDnHOYe9okZTaPF?speed=2&theme=monokai)
+[![asciicast](https://asciinema.org/a/N9BrRrhMRpvWlFrWQpJCftnPv.svg)](https://asciinema.org/a/N9BrRrhMRpvWlFrWQpJCftnPv?speed=2&theme=monokai)

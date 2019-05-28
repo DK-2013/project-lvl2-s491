@@ -6,6 +6,9 @@ start:
 
 publish:
 	npm publish --dry-run
+
+republish:
+	npm publish --dry-run
 	npm link
 
 lint:
