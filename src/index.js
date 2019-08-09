@@ -1,4 +1,6 @@
-import genDiff, { getDiff as d } from './gendiff';
+import genDiff, { getDiff } from './gendiff';
+import getParser from './parsers';
 
-export const getDiff = d;
+export { getParser, getDiff };
+
 export default genDiff;

@@ -8,9 +8,17 @@
 ```sh
 $ npm install -g gendiff-dk
 ```
-[![asciicast](https://asciinema.org/a/N9BrRrhMRpvWlFrWQpJCftnPv.svg)](https://asciinema.org/a/N9BrRrhMRpvWlFrWQpJCftnPv?speed=2&theme=monokai)
+ or
+```sh
+$ cd project_root
+$ npm link
+```
+[![asciicast](https://asciinema.org/a/pIgzEZcl5ZaXIbwGjMSOxMCpi.svg)](https://asciinema.org/a/pIgzEZcl5ZaXIbwGjMSOxMCpi?speed=2&theme=monokai)
 
 ```sh
 $ gendiff path1 path2
 ```
+### for json
 [![asciicast](https://asciinema.org/a/hXXM4xTpbNi0YaTEGeWByZnPC.svg)](https://asciinema.org/a/hXXM4xTpbNi0YaTEGeWByZnPC?speed=2&theme=monokai)
+### for yaml
+[![asciicast](https://asciinema.org/a/vmh9Yao9bCRpvcQydgWxD4avU.svg)](https://asciinema.org/a/vmh9Yao9bCRpvcQydgWxD4avU?speed=2&theme=monokai)
