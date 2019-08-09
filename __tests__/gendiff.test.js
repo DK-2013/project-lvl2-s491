@@ -1,37 +1,32 @@
 import { readFileSync } from 'fs';
+import { join as getPath } from 'path';
 import genDiff, { getParser } from '../src';
 
 const pathEntry = '__tests__/__fixtures__';
 const rawDiff = readFileSync(`${pathEntry}/diff.txt`, 'utf8');
-const pathBeforeJson = `${pathEntry}/before.json`;
-const pathAfterJson = `${pathEntry}/after.json`;
-const pathBeforeYaml = `${pathEntry}/before.yml`;
-const pathAfterYaml = `${pathEntry}/after.yml`;
 
-const beforeObj = {
-  host: 'hexlet.io',
-  timeout: 50,
-  proxy: '123.234.53.22',
-  follow: false,
-};
-const afterObj = {
-  timeout: 20,
-  verbose: true,
-  host: 'hexlet.io',
+const objects = {
+  before: {
+    host: 'hexlet.io',
+    timeout: 50,
+    proxy: '123.234.53.22',
+    follow: false,
+  },
+  after: {
+    timeout: 20,
+    verbose: true,
+    host: 'hexlet.io',
+  },
 };
 
-test('json parser', () => {
-  const parser = getParser(pathBeforeJson);
-  expect(parser.parse(readFileSync(pathBeforeJson))).toEqual(beforeObj);
-  expect(parser.parse(readFileSync(pathAfterJson))).toEqual(afterObj);
-});
-
-test('yaml parser', () => {
-  const parser = getParser(pathBeforeYaml);
-  expect(parser.parse(readFileSync(pathBeforeYaml))).toEqual(beforeObj);
-  expect(parser.parse(readFileSync(pathAfterYaml))).toEqual(afterObj);
+describe.each([['json'], ['yml'], ['ini']])('%s parser', (type) => {
+  test.each([['before'], ['after']])(`%s.${type}`, (fileName) => {
+    const path = getPath(pathEntry, `${fileName}.${type}`);
+    const parser = getParser(path);
+    expect(parser.parse(readFileSync(path, 'utf8'))).toEqual(objects[fileName]);
+  });
 });
 
 test('objects diff', () => {
-  expect(genDiff(beforeObj, afterObj)).toBe(rawDiff);
+  expect(genDiff(objects.before, objects.after)).toBe(rawDiff);
 });
