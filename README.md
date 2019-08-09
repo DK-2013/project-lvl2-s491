@@ -4,17 +4,14 @@
 # Compares two configuration files and shows a difference.
 ##
 
-## Setup & launch:
-```sh
-$ npm install -g gendiff-dk
-```
- or
+## Setup:
 ```sh
 $ cd project_root
 $ npm link
 ```
 [![asciicast](https://asciinema.org/a/pIgzEZcl5ZaXIbwGjMSOxMCpi.svg)](https://asciinema.org/a/pIgzEZcl5ZaXIbwGjMSOxMCpi?speed=2&theme=monokai)
 
+## Launch:
 ```sh
 $ gendiff path1 path2
 ```
