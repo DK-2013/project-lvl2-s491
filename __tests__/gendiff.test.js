@@ -67,7 +67,7 @@ const objects = {
   },
 };
 
-describe.each([['plain'], ['nested']])('Structure - %s', (structure) => {
+describe.each([['plain'], ['nested']])('Data structure - %s', (structure) => {
   describe.each([['json'], ['yml'], ['ini']])('%s parser', (type) => {
     test.each([['before'], ['after']])(`%s.${type}`, (fileName) => {
       const path = getPath(pathEntry, structure, `${fileName}.${type}`);
@@ -76,9 +76,11 @@ describe.each([['plain'], ['nested']])('Structure - %s', (structure) => {
     });
   });
 
-  test(`${structure} objects diff`, () => {
-    const path = getPath(pathEntry, structure, 'diff.txt');
-    const rawDiff = readFileSync(path, 'utf8');
-    expect(genDiff(objects[structure].before, objects[structure].after)).toBe(rawDiff);
+  describe.each([['tree'], ['plain']])('Output format - %s', (format) => {
+    test(`${structure} objects diff`, () => {
+      const path = getPath(pathEntry, structure, `${format}diff.txt`);
+      const rawDiff = readFileSync(path, 'utf8');
+      expect(genDiff(objects[structure].before, objects[structure].after, format)).toBe(rawDiff);
+    });
   });
 });

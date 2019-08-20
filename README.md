@@ -12,7 +12,7 @@ $ npm i
 $ make build
 $ npm link
 ```
-[![asciicast](https://asciinema.org/a/33NumPtuEby83gUVb8GpfOt15.svg)](https://asciinema.org/a/33NumPtuEby83gUVb8GpfOt15?speed=2&theme=monokai)
+[![asciicast](https://asciinema.org/a/5JQoLypIYaNCTeXF1QYqjFbL6.svg)](https://asciinema.org/a/5JQoLypIYaNCTeXF1QYqjFbL6?speed=2&theme=monokai)
 
 ## Launch:
 ```sh
@@ -27,8 +27,14 @@ $ gendiff path1 path2
 
 NB about package ini: to got number from ini string use bug - singlequoted value, whithout comment(!)
 
+## Plain format
+```sh
+$ gendiff path1 path2 -f plain
+```
+[![asciicast](https://asciinema.org/a/aCUpmz3c3D4cYedgRR0CRkDKi.svg)](https://asciinema.org/a/aCUpmz3c3D4cYedgRR0CRkDKi?speed=2&theme=monokai)
+
 ## Tests:
 ```sh
 $ make test
 ```
-[![asciicast](https://asciinema.org/a/EqMTj5bd3cSQwZZyfSYumcP3U.svg)](https://asciinema.org/a/EqMTj5bd3cSQwZZyfSYumcP3U?speed=2&theme=monokai)
+[![asciicast](https://asciinema.org/a/5gUQx0cI6fiIKXPAb0LXqQicy.svg)](https://asciinema.org/a/5gUQx0cI6fiIKXPAb0LXqQicy?speed=2&theme=monokai)
