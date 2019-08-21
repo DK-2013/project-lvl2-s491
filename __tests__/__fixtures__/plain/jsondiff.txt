@@ -1,0 +1,1 @@
+[{"prop":"follow","val":false,"act":"del"},{"prop":"host","val":"hexlet.io","act":""},{"prop":"proxy","val":"123.234.53.22","act":"del"},{"prop":"timeout","val":{"before":50,"after":20},"act":"upd"},{"prop":"verbose","val":true,"act":"add"}]

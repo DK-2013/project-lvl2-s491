@@ -28,10 +28,10 @@ const renders = [
     },
   },
   {
-    checker: node => _.has(node, 'children'),
+    checker: node => _.has(node, 'diff'),
     render: (node, lvl) => [
       renderProp(node, lvl),
-      render(node.val, lvl + 1),
+      render(node.diff, lvl + 1),
     ].join(''),
   },
   {

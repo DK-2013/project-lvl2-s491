@@ -1,71 +1,23 @@
 import { readFileSync } from 'fs';
 import { join as getPath } from 'path';
-import genDiff, { getParser } from '../src';
+import genDiff, { getDiff, getParser } from '../src';
 
 const pathEntry = '__tests__/__fixtures__';
+const objects = JSON.parse(readFileSync(getPath(pathEntry, 'input.json'), 'utf8'));
+const expectedDiff = JSON.parse(readFileSync(getPath(pathEntry, 'innerdiff.json'), 'utf8'));
 
-const objects = {
-  plain: {
-    before: {
-      host: 'hexlet.io',
-      timeout: 50,
-      proxy: '123.234.53.22',
-      follow: false,
-    },
-    after: {
-      timeout: 20,
-      verbose: true,
-      host: 'hexlet.io',
-    },
-  },
-  nested: {
-    before: {
-      common: {
-        setting1: 'Value 1',
-        setting2: 200,
-        setting3: true,
-        setting6: {
-          key: 'value',
-        },
-      },
-      group1: {
-        baz: 'bas',
-        foo: 'bar',
-        nest: {
-          key: 'value',
-        },
-      },
-      group2: {
-        abc: 12345,
-      },
-    },
-    after: {
-      common: {
-        follow: false,
-        setting1: 'Value 1',
-        setting3: {
-          key: 'value',
-        },
-        setting4: 'blah blah',
-        setting5: {
-          key5: 'value5',
-        },
-        setting6: {
-          key: 'value',
-          ops: 'vops',
-        },
-      },
-      group1: {
-        foo: 'bar',
-        baz: 'bars',
-        nest: 'str',
-      },
-      group3: {
-        fee: 100500,
-      },
-    },
-  },
-};
+describe('Inner diff', () => {
+  test('for equal objects', () => {
+    const before = { prop: { key: 777 } };
+    const after = { prop: { key: 777 } };
+    const expected = [{ act: 0, prop: 'prop', val: { key: 777 } }];
+    expect(getDiff(before, after)).toEqual(expected);
+  });
+  test.each([['plain'], ['nested']])('for %s data structure', (structure) => {
+    const cfg = objects[structure];
+    expect(getDiff(cfg.before, cfg.after)).toEqual(expectedDiff[structure]);
+  });
+});
 
 describe.each([['plain'], ['nested']])('Data structure - %s', (structure) => {
   describe.each([['json'], ['yml'], ['ini']])('%s parser', (type) => {
@@ -76,7 +28,7 @@ describe.each([['plain'], ['nested']])('Data structure - %s', (structure) => {
     });
   });
 
-  describe.each([['tree'], ['plain']])('Output format - %s', (format) => {
+  describe.each([['tree'], ['plain'], ['json']])('Output format - %s', (format) => {
     test(`${structure} objects diff`, () => {
       const path = getPath(pathEntry, structure, `${format}diff.txt`);
       const rawDiff = readFileSync(path, 'utf8');

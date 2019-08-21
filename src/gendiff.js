@@ -19,20 +19,15 @@ const getNode = (prop, beforeObj, afterObj) => {
   const after = afterObj[prop];
   if (before === after) return { prop, val: after, act: UNCHANGED };
   if (_.isObject(before) && _.isObject(after)) {
+    const diff = getDiff(before, after);
+    if (diff.every(({ act }) => act === UNCHANGED)) return { prop, val: after, act: UNCHANGED };
     return {
-      prop,
-      children: { before, after },
-      val: getDiff(before, after),
-      act: _.isEqual(before, after) ? UNCHANGED : UPDATED,
+      prop, val: { before, after }, diff, act: UPDATED,
     };
   }
   if (!_.has(afterObj, prop)) return { prop, val: before, act: DELETED };
   if (!_.has(beforeObj, prop)) return { prop, val: after, act: ADDED };
-  return {
-    prop,
-    val: { before, after },
-    act: UPDATED,
-  };
+  return { prop, val: { before, after }, act: UPDATED };
 };
 
 export default (before, after, format = 'tree') => getFormatter(format)(getDiff(before, after));

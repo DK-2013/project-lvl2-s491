@@ -11,8 +11,9 @@ $ cd root
 $ npm i
 $ make build
 $ npm link
+$ gendiff -h
 ```
-[![asciicast](https://asciinema.org/a/5JQoLypIYaNCTeXF1QYqjFbL6.svg)](https://asciinema.org/a/5JQoLypIYaNCTeXF1QYqjFbL6?speed=2&theme=monokai)
+[![asciicast](https://asciinema.org/a/fkp6eo9HCLh4SxRc6oPFrG8In.svg)](https://asciinema.org/a/fkp6eo9HCLh4SxRc6oPFrG8In?speed=2&theme=monokai)
 
 ## Launch:
 ```sh
@@ -27,14 +28,20 @@ $ gendiff path1 path2
 
 NB about package ini: to got number from ini string use bug - singlequoted value, whithout comment(!)
 
-## Plain format
+## Output format
+### plain
 ```sh
 $ gendiff path1 path2 -f plain
 ```
 [![asciicast](https://asciinema.org/a/aCUpmz3c3D4cYedgRR0CRkDKi.svg)](https://asciinema.org/a/aCUpmz3c3D4cYedgRR0CRkDKi?speed=2&theme=monokai)
+### json
+```sh
+$ gendiff path1 path2 -f json
+```
+[![asciicast](https://asciinema.org/a/QvZNQbl1a5gnmXsCxmB5jqQN1.svg)](https://asciinema.org/a/QvZNQbl1a5gnmXsCxmB5jqQN1?speed=2&theme=monokai)
 
 ## Tests:
 ```sh
 $ make test
 ```
-[![asciicast](https://asciinema.org/a/5gUQx0cI6fiIKXPAb0LXqQicy.svg)](https://asciinema.org/a/5gUQx0cI6fiIKXPAb0LXqQicy?speed=2&theme=monokai)
+[![asciicast](https://asciinema.org/a/ky9zjieSzGtcPpsvhurj49J7i.svg)](https://asciinema.org/a/ky9zjieSzGtcPpsvhurj49J7i?speed=2&theme=monokai)

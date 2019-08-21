@@ -1,10 +1,12 @@
 import { has } from 'lodash';
 import treeFormatter from './treeFormatter';
 import plainFormatter from './plainFormatter';
+import jsonFormatter from './jsonFormatter';
 
 const formatters = {
   tree: treeFormatter,
   plain: plainFormatter,
+  json: jsonFormatter,
 };
 
 export default (format) => {

@@ -2,10 +2,7 @@ install:
 	npm install
 
 start:
-	npx babel-node src/bin/gendiff.js -h
-
-start_:
-	npx babel-node src/bin/gendiff.js __tests__/__fixtures__/plain/before.json __tests__/__fixtures__/plain/after.json --format=plain
+	npx babel-node src/bin/gendiff.js __tests__/__fixtures__/nested/before.json __tests__/__fixtures__/nested/after.json
 
 tmp:
 	npx babel-node tmp.js

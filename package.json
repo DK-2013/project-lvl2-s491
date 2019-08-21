@@ -1,6 +1,6 @@
 {
   "name": "gendiff-dk",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Viewer difference data structure",
   "main": "dist/index.js",
   "files": [

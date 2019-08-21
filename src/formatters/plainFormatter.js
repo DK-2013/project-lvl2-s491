@@ -41,7 +41,7 @@ const renders = {
 
 const render = (data) => {
   const renderNode = (node) => {
-    if (_.has(node, 'children')) return render(node.val.map(propUpdate(node.prop)));
+    if (_.has(node, 'diff')) return render(node.diff.map(propUpdate(node.prop)));
     return renders[node.act](node);
   };
   return data.map(renderNode).filter(_.identity).join('\n');

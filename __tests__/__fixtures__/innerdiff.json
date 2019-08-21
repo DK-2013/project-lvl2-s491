@@ -1,0 +1,184 @@
+{
+  "plain": [
+    {
+      "act": 2,
+      "prop": "follow",
+      "val": false
+    },
+    {
+      "act": 0,
+      "prop": "host",
+      "val": "hexlet.io"
+    },
+    {
+      "act": 2,
+      "prop": "proxy",
+      "val": "123.234.53.22"
+    },
+    {
+      "act": 3,
+      "prop": "timeout",
+      "val": {
+        "before": 50,
+        "after": 20
+      }
+    },
+    {
+      "act": 1,
+      "prop": "verbose",
+      "val": true
+    }
+  ],
+  "nested": [
+    {
+      "act": 3,
+      "prop": "common",
+      "val": {
+        "before": {
+          "setting1": "Value 1",
+          "setting2": 200,
+          "setting3": true,
+          "setting6": {
+            "key": "value"
+          }
+        },
+        "after": {
+          "follow": false,
+          "setting1": "Value 1",
+          "setting3": {
+            "key": "value"
+          },
+          "setting4": "blah blah",
+          "setting5": {
+            "key5": "value5"
+          },
+          "setting6": {
+            "key": "value",
+            "ops": "vops"
+          }
+        }
+      },
+      "diff": [
+        {
+          "act": 1,
+          "prop": "follow",
+          "val": false
+        },
+        {
+          "act": 0,
+          "prop": "setting1",
+          "val": "Value 1"
+        },
+        {
+          "act": 2,
+          "prop": "setting2",
+          "val": 200
+        },
+        {
+          "act": 3,
+          "prop": "setting3",
+          "val": {
+            "before": true,
+            "after": {
+              "key": "value"
+            }
+          }
+        },
+        {
+          "act": 1,
+          "prop": "setting4",
+          "val": "blah blah"
+        },
+        {
+          "act": 1,
+          "prop": "setting5",
+          "val": {
+            "key5": "value5"
+          }
+        },
+        {
+          "act": 3,
+          "prop": "setting6",
+          "val": {
+            "before": {
+              "key": "value"
+            },
+            "after": {
+              "key": "value",
+              "ops": "vops"
+            }
+          },
+          "diff": [
+            {
+              "act": 0,
+              "prop": "key",
+              "val": "value"
+            },
+            {
+              "act": 1,
+              "prop": "ops",
+              "val": "vops"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "act": 3,
+      "prop": "group1",
+      "val": {
+        "before": {
+          "baz": "bas",
+          "foo": "bar",
+          "nest": {
+            "key": "value"
+          }
+        },
+        "after": {
+          "baz": "bars",
+          "foo": "bar",
+          "nest": "str"
+        }
+      },
+      "diff": [
+        {
+          "act": 3,
+          "prop": "baz",
+          "val": {
+            "before": "bas",
+            "after": "bars"
+          }
+        },
+        {
+          "act": 0,
+          "prop": "foo",
+          "val": "bar"
+        },
+        {
+          "act": 3,
+          "prop": "nest",
+          "val": {
+            "before": {
+              "key": "value"
+            },
+            "after": "str"
+          }
+        }
+      ]
+    },
+    {
+      "act": 2,
+      "prop": "group2",
+      "val": {
+        "abc": 12345
+      }
+    },
+    {
+      "act": 1,
+      "prop": "group3",
+      "val": {
+        "fee": 100500
+      }
+    }
+  ]
+}
