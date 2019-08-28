@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import actions from './actions';
-import getFormatter from './formatters';
 
 const {
   UNCHANGED, ADDED, DELETED, UPDATED,
 } = actions;
 
-export const getDiff = (obj1, obj2) => {
+const genDiff = (obj1, obj2) => {
   const allKeys = _.union(Object.keys(obj1), Object.keys(obj2)).sort();
   return allKeys.reduce(
     // eslint-disable-next-line no-use-before-define
@@ -19,7 +18,7 @@ const getNode = (prop, beforeObj, afterObj) => {
   const after = afterObj[prop];
   if (before === after) return { prop, val: after, act: UNCHANGED };
   if (_.isObject(before) && _.isObject(after)) {
-    const diff = getDiff(before, after);
+    const diff = genDiff(before, after);
     if (diff.every(({ act }) => act === UNCHANGED)) return { prop, val: after, act: UNCHANGED };
     return {
       prop, val: { before, after }, diff, act: UPDATED,
@@ -30,4 +29,4 @@ const getNode = (prop, beforeObj, afterObj) => {
   return { prop, val: { before, after }, act: UPDATED };
 };
 
-export default (before, after, format = 'tree') => getFormatter(format)(getDiff(before, after));
+export default (before, after) => genDiff(before, after);
