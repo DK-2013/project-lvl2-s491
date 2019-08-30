@@ -11,9 +11,9 @@ const receiveData = (pathToData) => {
   return getParser(pathToData).parse(rawData);
 };
 
-const getFormat = format => (isFunction(format) ? format : getFormatter(format));
+const getFormat = (format) => (isFunction(format) ? format : getFormatter(format));
 
-export default (pathToCfgBefore, pathToCfgAfter, { format = 'tree', getData = receiveData } = {}) => {
+export default (pathToCfgBefore, pathToCfgAfter, format = 'tree', getData = receiveData) => {
   const before = getData(pathToCfgBefore);
   const after = getData(pathToCfgAfter);
   const diff = genDiff(before, after);

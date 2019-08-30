@@ -3,13 +3,6 @@ import { join as getPath } from 'path';
 import genDiff from '../src';
 
 const pathEntry = '__tests__/__fixtures__';
-let config;
-let objects;
-let expectedDiff;
-
-beforeAll(() => {
-  objects = JSON.parse(readFileSync(getPath(pathEntry, 'input.json'), 'utf8'));
-});
 
 describe('Invalid arguments', () => {
   test('File not found', () => {
@@ -24,25 +17,8 @@ describe('Invalid arguments', () => {
     const pathToBefore = getPath(pathEntry, 'nested', 'before.json');
     const pathToAfter = getPath(pathEntry, 'nested', 'after.json');
     expect(() => {
-      genDiff(pathToBefore, pathToAfter, { format: 'xml' });
-    }).toThrow("Unsupported format: 'xml'");
-  });
-});
-
-describe('Inner diff', () => {
-  beforeAll(() => {
-    config = { format: dt => dt, getData: data => data };
-    expectedDiff = JSON.parse(readFileSync(getPath(pathEntry, 'innerdiff.json'), 'utf8'));
-  });
-  test('for equal objects', () => {
-    const before = { prop: { key: 777 } };
-    const after = { prop: { key: 777 } };
-    const expected = [{ act: 0, prop: 'prop', val: { key: 777 } }];
-    expect(genDiff(before, after, config)).toEqual(expected);
-  });
-  test.each(['plain', 'nested'])('for %s data structure', (structure) => {
-    const cfg = objects[structure];
-    expect(genDiff(cfg.before, cfg.after, config)).toEqual(expectedDiff[structure]);
+      genDiff(pathToBefore, pathToAfter, 'xml');
+    }).toThrow();
   });
 });
 
@@ -53,13 +29,13 @@ describe.each(['plain', 'nested'])('Data structure: %s', (structure) => {
     test.each(['tree', 'plain'])('Output format - %s', (format) => {
       const path = getPath(pathEntry, structure, `${format}diff.txt`);
       const rawDiff = readFileSync(path, 'utf8');
-      expect(genDiff(pathBefore, pathAfter, { format })).toBe(rawDiff);
+      expect(genDiff(pathBefore, pathAfter, format)).toBe(rawDiff);
     });
     test('Output format - json', () => {
       const format = 'json';
       const path = getPath(pathEntry, structure, `${format}diff.txt`);
       const rawDiff = readFileSync(path, 'utf8');
-      expect(JSON.parse(genDiff(pathBefore, pathAfter, { format }))).toEqual(JSON.parse(rawDiff));
+      expect(JSON.parse(genDiff(pathBefore, pathAfter, format))).toEqual(JSON.parse(rawDiff));
     });
   });
 });

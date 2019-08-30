@@ -13,9 +13,9 @@ const actsMap = {
   [UPDATED]: 'upd',
 };
 
-const updateActsValue = data => data.reduce((acc, node) => {
+const updateActsValue = (data) => data.reduce((acc, node) => {
   if (!_.has(node, 'diff')) return [...acc, { ...node, act: actsMap[node.act] }];
   return [...acc, { ...node, act: actsMap[node.act], diff: updateActsValue(node.diff) }];
 }, []);
 
-export default data => JSON.stringify(updateActsValue(data));
+export default (data) => JSON.stringify(updateActsValue(data));

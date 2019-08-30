@@ -20,13 +20,13 @@ const renderValue = (val) => {
 };
 const propAddedUpdate = (prntProp, prntVal) => _.map(prntVal,
   (chVal, key) => ({ prop: [prntProp, key].join('.'), val: chVal, act: ADDED }));
-const propUpdate = prntProp => node => _.set(node, 'prop', [prntProp, node.prop].join('.'));
+const propUpdate = (prntProp) => (node) => _.set(node, 'prop', [prntProp, node.prop].join('.'));
 
 const renders = {
   [ADDED]: (node) => {
     const { prop, val } = node;
     const toRender = _.isObject(val) ? [].concat(node, propAddedUpdate(prop, val)) : [node];
-    return toRender.map(nd => `${renderProp(nd)} with value: ${renderValue(nd.val)}`).join('\n');
+    return toRender.map((nd) => `${renderProp(nd)} with value: ${renderValue(nd.val)}`).join('\n');
   },
   [UPDATED]: (node) => {
     const { prop, val } = node;
@@ -34,7 +34,7 @@ const renders = {
     if (_.isObject(val.after)) return [].concat(updatedStr, propAddedUpdate(prop, val.after).map(renders[ADDED])).join('\n');
     return updatedStr;
   },
-  [DELETED]: node => `${renderProp(node)}`,
+  [DELETED]: (node) => `${renderProp(node)}`,
   [UNCHANGED]: () => '',
 };
 
