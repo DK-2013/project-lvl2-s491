@@ -1,15 +1,13 @@
 import _ from 'lodash';
 import actions from '../actions';
 
-const {
-  UNCHANGED, ADDED, DELETED, UPDATED,
-} = actions;
+const [unchanged, added, deleted, updated] = actions;
 
 const acts = {
-  [ADDED]: 'added',
-  [DELETED]: 'removed',
-  [UNCHANGED]: ' ',
-  [UPDATED]: 'updated',
+  [added]: 'added',
+  [deleted]: 'removed',
+  [unchanged]: ' ',
+  [updated]: 'updated',
 };
 
 const renderProp = ({ act, prop }) => `Property '${prop}' was ${acts[act]}`;
@@ -19,23 +17,23 @@ const renderValue = (val) => {
   return val;
 };
 const propAddedUpdate = (prntProp, prntVal) => _.map(prntVal,
-  (chVal, key) => ({ prop: [prntProp, key].join('.'), val: chVal, act: ADDED }));
+  (chVal, key) => ({ prop: [prntProp, key].join('.'), val: chVal, act: added }));
 const propUpdate = (prntProp) => (node) => _.set(node, 'prop', [prntProp, node.prop].join('.'));
 
 const renders = {
-  [ADDED]: (node) => {
+  [added]: (node) => {
     const { prop, val } = node;
     const toRender = _.isObject(val) ? [].concat(node, propAddedUpdate(prop, val)) : [node];
     return toRender.map((nd) => `${renderProp(nd)} with value: ${renderValue(nd.val)}`).join('\n');
   },
-  [UPDATED]: (node) => {
-    const { prop, val } = node;
-    const updatedStr = `${renderProp(node)}. From ${renderValue(val.before)} to ${renderValue(val.after)}`;
-    if (_.isObject(val.after)) return [].concat(updatedStr, propAddedUpdate(prop, val.after).map(renders[ADDED])).join('\n');
+  [updated]: (node) => {
+    const { prop, valBefore, valAfter } = node;
+    const updatedStr = `${renderProp(node)}. From ${renderValue(valBefore)} to ${renderValue(valAfter)}`;
+    if (_.isObject(valAfter)) return [].concat(updatedStr, propAddedUpdate(prop, valAfter).map(renders[added])).join('\n');
     return updatedStr;
   },
-  [DELETED]: (node) => `${renderProp(node)}`,
-  [UNCHANGED]: () => '',
+  [deleted]: (node) => `${renderProp(node)}`,
+  [unchanged]: () => '',
 };
 
 

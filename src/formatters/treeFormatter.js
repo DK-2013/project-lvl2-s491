@@ -1,55 +1,51 @@
 import _ from 'lodash';
 import actions from '../actions';
 
-const {
-  UNCHANGED, ADDED, DELETED, UPDATED,
-} = actions;
+const [unchanged, added, deleted, updated] = actions;
 
 const prefixes = {
-  [ADDED]: '+',
-  [DELETED]: '-',
-  [UNCHANGED]: ' ',
-  [UPDATED]: ' ',
+  [added]: '+',
+  [deleted]: '-',
+  [unchanged]: ' ',
+  [updated]: ' ',
 };
 
 const getIndent = (lvl) => _.repeat('  ', lvl);
 const renderProp = ({ act, prop }, lvl) => `${getIndent(lvl)}${prefixes[act] || ' '} ${prop}: `;
-// eslint-disable-next-line no-use-before-define
-const render = (data, lvl) => renders.find(({ checker }) => checker(data)).render(data, lvl);
 
 const renders = [
   {
     checker: (diff) => _.isArray(diff),
-    render: (diff, lvl = 0) => {
+    render: (diff, lvl = 0, fn) => {
       const openStr = '{\n';
-      const strings = diff.map((node) => render(node, lvl + 1));
+      const strings = diff.map((node) => fn(node, lvl + 1));
       const closeStr = `${getIndent(lvl)}}${lvl > 0 ? '\n' : ''}`;
       return [openStr, ...strings, closeStr].join('');
     },
   },
   {
     checker: (node) => _.has(node, 'diff'),
-    render: (node, lvl) => [
+    render: (node, lvl, fn) => [
       renderProp(node, lvl),
-      render(node.diff, lvl + 1),
+      fn(node.diff, lvl + 1),
     ].join(''),
   },
   {
-    checker: ({ act }) => act === UPDATED,
-    render: ({ prop, val }, lvl) => {
-      const { before, after } = val;
+    checker: ({ act }) => act === updated,
+    render: ({ prop, valBefore, valAfter }, lvl, fn) => {
       const nodes = [
-        { prop, val: before, act: DELETED },
-        { prop, val: after, act: ADDED }];
-      return nodes.map((node) => render(node, lvl)).join('');
+        { prop, val: valBefore, act: deleted },
+        { prop, val: valAfter, act: added }];
+      return nodes.map((node) => fn(node, lvl)).join('');
     },
   },
   {
     checker: ({ val }) => _.isObject(val),
-    render: (node, lvl) => [
-      renderProp(node, lvl),
-      render(_.keys(node.val).sort().map((prop) => ({ prop, val: node.val[prop] })), lvl + 1),
-    ].join(''),
+    render: (node, lvl, fn) => {
+      const valProps = _.keys(node.val).sort();
+      const nodes = valProps.map((prop) => ({ prop, val: node.val[prop] }));
+      return [renderProp(node, lvl), fn(nodes, lvl + 1)].join('');
+    },
   },
   {
     checker: () => true,
@@ -57,4 +53,11 @@ const renders = [
   },
 ];
 
-export default render;
+const getRender = (data) => renders.find(({ checker }) => checker(data));
+
+const formatter = (data, lvl) => {
+  const { render } = getRender(data);
+  return render(data, lvl, formatter);
+};
+
+export default formatter;

@@ -1,32 +1,49 @@
 import _ from 'lodash';
 import actions from './actions';
 
-const {
-  UNCHANGED, ADDED, DELETED, UPDATED,
-} = actions;
+const [unchanged, added, deleted, updated] = actions;
+
+
+const nodeBuilders = [
+  {
+    check: (prop, objBefore, objAfter) => _.isObject(objBefore[prop]) && _.isObject(objAfter[prop]),
+    build: (prop, valBefore, valAfter, fn) => {
+      const diff = fn(valBefore, valAfter);
+      return diff.every(({ act }) => act === unchanged)
+        ? { prop, val: valAfter, act: unchanged }
+        // eslint-disable-next-line object-curly-newline
+        : { prop, valBefore, valAfter, diff, act: updated };
+    },
+  },
+  {
+    check: (prop, objBefore, objAfter) => objBefore[prop] === objAfter[prop],
+    build: (prop, valBefore, valAfter) => ({ prop, val: valAfter, act: unchanged }),
+  },
+  {
+    check: (prop, objBefore, objAfter) => !_.has(objAfter, prop),
+    build: (prop, valBefore) => ({ prop, val: valBefore, act: deleted }),
+  },
+  {
+    check: (prop, objBefore) => !_.has(objBefore, prop),
+    build: (prop, valBefore, valAfter) => ({ prop, val: valAfter, act: added }),
+  },
+  {
+    check: () => true,
+    // eslint-disable-next-line object-curly-newline
+    build: (prop, valBefore, valAfter) => ({ prop, valBefore, valAfter, act: updated }),
+  },
+];
+
+const getNodeBuilder = (prop, objBefore, objAfter) => nodeBuilders.find(
+  ({ check }) => check(prop, objBefore, objAfter),
+);
 
 const genDiff = (obj1, obj2) => {
   const allKeys = _.union(Object.keys(obj1), Object.keys(obj2)).sort();
-  return allKeys.reduce(
-    // eslint-disable-next-line no-use-before-define
-    (acc, prop) => [...acc, getNode(prop, obj1, obj2)], [],
-  );
+  return allKeys.map((prop) => {
+    const { build } = getNodeBuilder(prop, obj1, obj2);
+    return build(prop, obj1[prop], obj2[prop], genDiff);
+  });
 };
 
-const getNode = (prop, beforeObj, afterObj) => {
-  const before = beforeObj[prop];
-  const after = afterObj[prop];
-  if (before === after) return { prop, val: after, act: UNCHANGED };
-  if (_.isObject(before) && _.isObject(after)) {
-    const diff = genDiff(before, after);
-    if (diff.every(({ act }) => act === UNCHANGED)) return { prop, val: after, act: UNCHANGED };
-    return {
-      prop, val: { before, after }, diff, act: UPDATED,
-    };
-  }
-  if (!_.has(afterObj, prop)) return { prop, val: before, act: DELETED };
-  if (!_.has(beforeObj, prop)) return { prop, val: after, act: ADDED };
-  return { prop, val: { before, after }, act: UPDATED };
-};
-
-export default (before, after) => genDiff(before, after);
+export default (valueBefore, valueAfter) => genDiff(valueBefore, valueAfter);

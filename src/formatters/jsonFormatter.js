@@ -2,15 +2,13 @@ import _ from 'lodash';
 import actions from '../actions';
 
 
-const {
-  UNCHANGED, ADDED, DELETED, UPDATED,
-} = actions;
+const [unchanged, added, deleted, updated] = actions;
 
 const actsMap = {
-  [ADDED]: 'add',
-  [DELETED]: 'del',
-  [UNCHANGED]: '',
-  [UPDATED]: 'upd',
+  [added]: 'add',
+  [deleted]: 'del',
+  [unchanged]: '',
+  [updated]: 'upd',
 };
 
 const updateActsValue = (data) => data.reduce((acc, node) => {

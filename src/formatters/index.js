@@ -7,6 +7,7 @@ const formatters = {
   tree: treeFormatter,
   plain: plainFormatter,
   json: jsonFormatter,
+  object: (data) => data,
 };
 
 export default (format) => {

@@ -24,18 +24,22 @@ describe('Invalid arguments', () => {
 
 describe.each(['plain', 'nested'])('Data structure: %s', (structure) => {
   describe.each(['json', 'yml', 'ini'])('Parser: %s', (type) => {
-    const pathBefore = getPath(pathEntry, structure, `before.${type}`);
-    const pathAfter = getPath(pathEntry, structure, `after.${type}`);
+    const pathToCfgBefore = getPath(pathEntry, structure, `before.${type}`);
+    const pathToCfgAfter = getPath(pathEntry, structure, `after.${type}`);
     test.each(['tree', 'plain'])('Output format - %s', (format) => {
-      const path = getPath(pathEntry, structure, `${format}diff.txt`);
-      const rawDiff = readFileSync(path, 'utf8');
-      expect(genDiff(pathBefore, pathAfter, format)).toBe(rawDiff);
+      const pathToExpectedCfg = getPath(pathEntry, structure, `${format}diff.txt`);
+      const expectedDiff = readFileSync(pathToExpectedCfg, 'utf8');
+      const actualDiff = genDiff(pathToCfgBefore, pathToCfgAfter, format);
+      expect(actualDiff).toBe(expectedDiff);
     });
     test('Output format - json', () => {
       const format = 'json';
-      const path = getPath(pathEntry, structure, `${format}diff.txt`);
-      const rawDiff = readFileSync(path, 'utf8');
-      expect(JSON.parse(genDiff(pathBefore, pathAfter, format))).toEqual(JSON.parse(rawDiff));
+      const pathToExpectedCfg = getPath(pathEntry, structure, `${format}diff.txt`);
+      const rawExpectedDiff = readFileSync(pathToExpectedCfg, 'utf8');
+      const expectedDiff = JSON.parse(rawExpectedDiff);
+      const rawActualDiff = genDiff(pathToCfgBefore, pathToCfgAfter, format);
+      const actualDiff = JSON.parse(rawActualDiff);
+      expect(actualDiff).toEqual(expectedDiff);
     });
   });
 });
