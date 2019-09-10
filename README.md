@@ -1,3 +1,4 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/65b52db3feb21597b432/maintainability)](https://codeclimate.com/github/DK-2013/project-lvl2-s491/maintainability)
 [![Build Status](https://travis-ci.com/DK-2013/project-lvl2-s491.svg?branch=master)](https://travis-ci.com/DK-2013/project-lvl2-s491)
 
 ##
