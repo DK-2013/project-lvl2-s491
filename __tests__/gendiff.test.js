@@ -7,37 +7,41 @@ const pathEntry = '__tests__/__fixtures__';
 describe('Invalid arguments', () => {
   test('File not found', () => {
     expect(() => {
-      genDiff(getPath(pathEntry, 'nested', 'therefore.json'), getPath(pathEntry, 'nested', 'after.json'));
+      const pathToConfigBefore = getPath(pathEntry, 'nested', 'therefore.json');
+      const pathToConfigAfter = getPath(pathEntry, 'nested', 'after.json');
+      genDiff(pathToConfigBefore, pathToConfigAfter);
     }).toThrow();
     expect(() => {
-      genDiff(getPath(pathEntry, 'nested', 'before.json'), getPath(pathEntry, 'compressed', 'after.json'));
+      const pathToConfigBefore = getPath(pathEntry, 'nested', 'before.json');
+      const pathToConfigAfter = getPath(pathEntry, 'compressed', 'after.json');
+      genDiff(pathToConfigBefore, pathToConfigAfter);
     }).toThrow();
   });
   test('Unsupported format - xml', () => {
-    const pathToBefore = getPath(pathEntry, 'nested', 'before.json');
-    const pathToAfter = getPath(pathEntry, 'nested', 'after.json');
+    const pathToConfigBefore = getPath(pathEntry, 'nested', 'before.json');
+    const pathToConfigAfter = getPath(pathEntry, 'nested', 'after.json');
     expect(() => {
-      genDiff(pathToBefore, pathToAfter, 'xml');
+      genDiff(pathToConfigBefore, pathToConfigAfter, 'xml');
     }).toThrow();
   });
 });
 
 describe.each(['plain', 'nested'])('Data structure: %s', (structure) => {
   describe.each(['json', 'yml', 'ini'])('Parser: %s', (type) => {
-    const pathToCfgBefore = getPath(pathEntry, structure, `before.${type}`);
-    const pathToCfgAfter = getPath(pathEntry, structure, `after.${type}`);
+    const pathToConfigBefore = getPath(pathEntry, structure, `before.${type}`);
+    const pathToConfigAfter = getPath(pathEntry, structure, `after.${type}`);
     test.each(['tree', 'plain'])('Output format - %s', (format) => {
-      const pathToExpectedCfg = getPath(pathEntry, structure, `${format}diff.txt`);
-      const expectedDiff = readFileSync(pathToExpectedCfg, 'utf8');
-      const actualDiff = genDiff(pathToCfgBefore, pathToCfgAfter, format);
+      const pathToExpectedConfig = getPath(pathEntry, structure, `${format}diff.txt`);
+      const expectedDiff = readFileSync(pathToExpectedConfig, 'utf8');
+      const actualDiff = genDiff(pathToConfigBefore, pathToConfigAfter, format);
       expect(actualDiff).toBe(expectedDiff);
     });
     test('Output format - json', () => {
       const format = 'json';
-      const pathToExpectedCfg = getPath(pathEntry, structure, `${format}diff.txt`);
-      const rawExpectedDiff = readFileSync(pathToExpectedCfg, 'utf8');
+      const pathToExpectedConfig = getPath(pathEntry, structure, `${format}diff.txt`);
+      const rawExpectedDiff = readFileSync(pathToExpectedConfig, 'utf8');
       const expectedDiff = JSON.parse(rawExpectedDiff);
-      const rawActualDiff = genDiff(pathToCfgBefore, pathToCfgAfter, format);
+      const rawActualDiff = genDiff(pathToConfigBefore, pathToConfigAfter, format);
       const actualDiff = JSON.parse(rawActualDiff);
       expect(actualDiff).toEqual(expectedDiff);
     });

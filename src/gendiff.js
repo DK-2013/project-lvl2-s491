@@ -1,49 +1,55 @@
 import _ from 'lodash';
-import actions from './actions';
+import nodeTypes from './nodeTypes';
 
-const [unchanged, added, deleted, updated] = actions;
+const [unchanged, added, deleted, updated, nested] = nodeTypes;
 
 
 const nodeBuilders = [
   {
-    check: (prop, objBefore, objAfter) => _.isObject(objBefore[prop]) && _.isObject(objAfter[prop]),
-    build: (prop, valBefore, valAfter, fn) => {
-      const diff = fn(valBefore, valAfter);
-      return diff.every(({ act }) => act === unchanged)
-        ? { prop, val: valAfter, act: unchanged }
+    check: (prop, objectBefore, objectAfter) => {
+      const valueBefore = objectBefore[prop];
+      const valueAfter = objectAfter[prop];
+      return _.isObject(valueBefore) && _.isObject(valueAfter);
+    },
+    build: (valueBefore, valueAfter, fn) => {
+      const diff = fn(valueBefore, valueAfter);
+      return diff.every(({ type }) => type === unchanged)
+        ? { value: valueAfter, type: unchanged }
         // eslint-disable-next-line object-curly-newline
-        : { prop, valBefore, valAfter, diff, act: updated };
+        : { valueBefore, valueAfter, diff, type: nested };
     },
   },
   {
-    check: (prop, objBefore, objAfter) => objBefore[prop] === objAfter[prop],
-    build: (prop, valBefore, valAfter) => ({ prop, val: valAfter, act: unchanged }),
+    check: (prop, objectBefore, objectAfter) => objectBefore[prop] === objectAfter[prop],
+    build: (valueBefore, valueAfter) => ({ value: valueAfter, type: unchanged }),
   },
   {
-    check: (prop, objBefore, objAfter) => !_.has(objAfter, prop),
-    build: (prop, valBefore) => ({ prop, val: valBefore, act: deleted }),
+    check: (prop, objectBefore, objectAfter) => !_.has(objectAfter, prop),
+    build: (valueBefore) => ({ value: valueBefore, type: deleted }),
   },
   {
-    check: (prop, objBefore) => !_.has(objBefore, prop),
-    build: (prop, valBefore, valAfter) => ({ prop, val: valAfter, act: added }),
+    check: (prop, objectBefore) => !_.has(objectBefore, prop),
+    build: (valueBefore, valueAfter) => ({ value: valueAfter, type: added }),
   },
   {
     check: () => true,
     // eslint-disable-next-line object-curly-newline
-    build: (prop, valBefore, valAfter) => ({ prop, valBefore, valAfter, act: updated }),
+    build: (valueBefore, valueAfter) => ({ valueBefore, valueAfter, type: updated }),
   },
 ];
 
-const getNodeBuilder = (prop, objBefore, objAfter) => nodeBuilders.find(
-  ({ check }) => check(prop, objBefore, objAfter),
+const getNodeBuilder = (prop, objectBefore, objectAfter) => nodeBuilders.find(
+  ({ check }) => check(prop, objectBefore, objectAfter),
 );
 
-const genDiff = (obj1, obj2) => {
-  const allKeys = _.union(Object.keys(obj1), Object.keys(obj2)).sort();
+const genDiff = (objectBefore, objectAfter) => {
+  const allKeys = _.union(Object.keys(objectBefore), Object.keys(objectAfter)).sort();
   return allKeys.map((prop) => {
-    const { build } = getNodeBuilder(prop, obj1, obj2);
-    return build(prop, obj1[prop], obj2[prop], genDiff);
+    const { build } = getNodeBuilder(prop, objectBefore, objectAfter);
+    const valueBefore = objectBefore[prop];
+    const valueAfter = objectAfter[prop];
+    return { ...build(valueBefore, valueAfter, genDiff), prop };
   });
 };
 
-export default (valueBefore, valueAfter) => genDiff(valueBefore, valueAfter);
+export default genDiff;

@@ -1,37 +1,43 @@
 import _ from 'lodash';
-import actions from '../actions';
+import nodeTypes from '../nodeTypes';
 
-const [unchanged, added, deleted, updated] = actions;
+const [unchanged, added, deleted, updated, nested] = nodeTypes;
 
 const acts = {
   [added]: 'added',
   [deleted]: 'removed',
   [unchanged]: ' ',
   [updated]: 'updated',
+  [nested]: 'updated',
 };
 
-const renderProp = ({ act, prop }) => `Property '${prop}' was ${acts[act]}`;
-const renderValue = (val) => {
-  if (_.isObject(val)) return '[complex value]';
-  if (_.isString(val)) return `'${val}'`;
-  return val;
+const renderProp = ({ type, prop }) => `Property '${prop}' was ${acts[type]}`;
+const renderValue = (value) => {
+  if (_.isObject(value)) return '[complex value]';
+  if (_.isString(value)) return `'${value}'`;
+  return value;
 };
-const propAddedUpdate = (prntProp, prntVal) => _.map(prntVal,
-  (chVal, key) => ({ prop: [prntProp, key].join('.'), val: chVal, act: added }));
-const propUpdate = (prntProp) => (node) => _.set(node, 'prop', [prntProp, node.prop].join('.'));
+const propAddedUpdate = (parentProp, parentValue) => _.map(parentValue,
+  (childValue, key) => ({ prop: [parentProp, key].join('.'), value: childValue, type: added }));
+const propUpdate = (parentProp) => (node) => _.set(node, 'prop', [parentProp, node.prop].join('.'));
+
+const addedRender = (node) => {
+  const { prop, value } = node;
+  const toRender = _.isObject(value) ? [].concat(node, propAddedUpdate(prop, value)) : [node];
+  return toRender.map((nd) => `${renderProp(nd)} with value: ${renderValue(nd.value)}`).join('\n');
+};
+
+const updatedRender = (node) => {
+  const { prop, valueBefore, valueAfter } = node;
+  const updatedStr = `${renderProp(node)}. From ${renderValue(valueBefore)} to ${renderValue(valueAfter)}`;
+  if (_.isObject(valueAfter)) return [].concat(updatedStr, propAddedUpdate(prop, valueAfter).map(addedRender)).join('\n');
+  return updatedStr;
+};
 
 const renders = {
-  [added]: (node) => {
-    const { prop, val } = node;
-    const toRender = _.isObject(val) ? [].concat(node, propAddedUpdate(prop, val)) : [node];
-    return toRender.map((nd) => `${renderProp(nd)} with value: ${renderValue(nd.val)}`).join('\n');
-  },
-  [updated]: (node) => {
-    const { prop, valBefore, valAfter } = node;
-    const updatedStr = `${renderProp(node)}. From ${renderValue(valBefore)} to ${renderValue(valAfter)}`;
-    if (_.isObject(valAfter)) return [].concat(updatedStr, propAddedUpdate(prop, valAfter).map(renders[added])).join('\n');
-    return updatedStr;
-  },
+  [added]: addedRender,
+  [updated]: updatedRender,
+  [nested]: updatedRender,
   [deleted]: (node) => `${renderProp(node)}`,
   [unchanged]: () => '',
 };
@@ -40,7 +46,7 @@ const renders = {
 const render = (data) => {
   const renderNode = (node) => {
     if (_.has(node, 'diff')) return render(node.diff.map(propUpdate(node.prop)));
-    return renders[node.act](node);
+    return renders[node.type](node);
   };
   return data.map(renderNode).filter(_.identity).join('\n');
 };

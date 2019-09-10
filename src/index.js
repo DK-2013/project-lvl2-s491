@@ -5,15 +5,15 @@ import getParse from './parsers';
 import getFormatter from './formatters';
 
 
-const receiveData = (pathToData) => {
+const getData = (pathToData) => {
   const rawData = readFileSync(getPath(pathToData), 'utf8');
   const parse = getParse(pathToData);
   return parse(rawData);
 };
 
-export default (pathToCfgBefore, pathToCfgAfter, format = 'tree', getData = receiveData) => {
-  const cfgBefore = getData(pathToCfgBefore);
-  const cfgAfter = getData(pathToCfgAfter);
-  const diff = genDiff(cfgBefore, cfgAfter);
+export default (pathToConfigBefore, pathToConfigAfter, format = 'tree') => {
+  const configBefore = getData(pathToConfigBefore);
+  const configAfter = getData(pathToConfigAfter);
+  const diff = genDiff(configBefore, configAfter);
   return getFormatter(format)(diff);
 };

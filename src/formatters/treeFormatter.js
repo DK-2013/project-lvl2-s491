@@ -1,63 +1,71 @@
 import _ from 'lodash';
-import actions from '../actions';
+import nodeTypes from '../nodeTypes';
 
-const [unchanged, added, deleted, updated] = actions;
+const [unchanged, added, deleted, updated, nested] = nodeTypes;
 
 const prefixes = {
   [added]: '+',
   [deleted]: '-',
   [unchanged]: ' ',
   [updated]: ' ',
+  [nested]: ' ',
 };
 
 const getIndent = (lvl) => _.repeat('  ', lvl);
-const renderProp = ({ act, prop }, lvl) => `${getIndent(lvl)}${prefixes[act] || ' '} ${prop}: `;
+
+const renderProp = ({ type, prop }, lvl) => `${getIndent(lvl)}${prefixes[type] || ' '} ${prop}: `;
+
+const renderValue = (value, lvl) => {
+  if (!_.isObject(value)) return value;
+
+  const keys = _.keys(value).sort();
+  const strings = keys.map((key) => {
+    const renderedProp = renderProp({ prop: key }, lvl + 1);
+    const renderedValue = renderValue(value[key], lvl + 1);
+    return `${renderedProp}${renderedValue}`;
+  });
+  return ['{', ...strings, `${getIndent(lvl)}}`].join('\n');
+};
+
+const getRenderEntry = (lvl) => (node) => {
+  const renderedProp = renderProp(node, lvl);
+  const renderedValue = renderValue(node.value, lvl + 1);
+  return `${renderedProp}${renderedValue}\n`;
+};
 
 const renders = [
   {
-    checker: (diff) => _.isArray(diff),
-    render: (diff, lvl = 0, fn) => {
-      const openStr = '{\n';
-      const strings = diff.map((node) => fn(node, lvl + 1));
-      const closeStr = `${getIndent(lvl)}}${lvl > 0 ? '\n' : ''}`;
-      return [openStr, ...strings, closeStr].join('');
-    },
-  },
-  {
-    checker: (node) => _.has(node, 'diff'),
+    checker: (type) => type === nested,
     render: (node, lvl, fn) => [
       renderProp(node, lvl),
       fn(node.diff, lvl + 1),
     ].join(''),
   },
   {
-    checker: ({ act }) => act === updated,
-    render: ({ prop, valBefore, valAfter }, lvl, fn) => {
+    checker: (type) => type === updated,
+    render: ({ prop, valueBefore, valueAfter }, lvl) => {
       const nodes = [
-        { prop, val: valBefore, act: deleted },
-        { prop, val: valAfter, act: added }];
-      return nodes.map((node) => fn(node, lvl)).join('');
-    },
-  },
-  {
-    checker: ({ val }) => _.isObject(val),
-    render: (node, lvl, fn) => {
-      const valProps = _.keys(node.val).sort();
-      const nodes = valProps.map((prop) => ({ prop, val: node.val[prop] }));
-      return [renderProp(node, lvl), fn(nodes, lvl + 1)].join('');
+        { prop, value: valueBefore, type: deleted },
+        { prop, value: valueAfter, type: added }];
+      return nodes.map(getRenderEntry(lvl)).join('');
     },
   },
   {
     checker: () => true,
-    render: (node, lvl) => `${renderProp(node, lvl)}${node.val}\n`,
+    render: (node, lvl) => getRenderEntry(lvl)(node),
   },
 ];
 
-const getRender = (data) => renders.find(({ checker }) => checker(data));
+const getRender = ({ type }) => renders.find(({ checker }) => checker(type));
 
-const formatter = (data, lvl) => {
-  const { render } = getRender(data);
-  return render(data, lvl, formatter);
+const formatter = (data, lvl = 0) => {
+  const openString = '{\n';
+  const innerStrings = data.map((node) => {
+    const { render } = getRender(node);
+    return render(node, lvl + 1, formatter);
+  });
+  const closeString = `${getIndent(lvl)}}${lvl > 0 ? '\n' : ''}`;
+  return [openString, ...innerStrings, closeString].join('');
 };
 
 export default formatter;

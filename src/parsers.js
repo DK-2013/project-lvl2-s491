@@ -9,9 +9,10 @@ const parsers = {
   '.ini': iniParse,
 };
 
-export default (path = 'fake.json') => {
+export default (path) => {
+  if (path === undefined) return parsers['.json'];
   const type = getParseType(path);
   if (has(parsers, type)) return parsers[type];
-  const msg = `Сould not parse config: ${path}`;
+  const msg = `Not found parser for config: ${path}`;
   throw new Error(msg);
 };

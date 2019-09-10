@@ -1,22 +1,22 @@
 {
   "plain": [
     {
-      "act": 2,
+      "type": 2,
       "prop": "follow",
       "val": false
     },
     {
-      "act": 0,
+      "type": 0,
       "prop": "host",
       "val": "hexlet.io"
     },
     {
-      "act": 2,
+      "type": 2,
       "prop": "proxy",
       "val": "123.234.53.22"
     },
     {
-      "act": 3,
+      "type": 3,
       "prop": "timeout",
       "val": {
         "before": 50,
@@ -24,14 +24,14 @@
       }
     },
     {
-      "act": 1,
+      "type": 1,
       "prop": "verbose",
       "val": true
     }
   ],
   "nested": [
     {
-      "act": 3,
+      "type": 3,
       "prop": "common",
       "val": {
         "before": {
@@ -60,22 +60,22 @@
       },
       "diff": [
         {
-          "act": 1,
+          "type": 1,
           "prop": "follow",
           "val": false
         },
         {
-          "act": 0,
+          "type": 0,
           "prop": "setting1",
           "val": "Value 1"
         },
         {
-          "act": 2,
+          "type": 2,
           "prop": "setting2",
           "val": 200
         },
         {
-          "act": 3,
+          "type": 3,
           "prop": "setting3",
           "val": {
             "before": true,
@@ -85,19 +85,19 @@
           }
         },
         {
-          "act": 1,
+          "type": 1,
           "prop": "setting4",
           "val": "blah blah"
         },
         {
-          "act": 1,
+          "type": 1,
           "prop": "setting5",
           "val": {
             "key5": "value5"
           }
         },
         {
-          "act": 3,
+          "type": 3,
           "prop": "setting6",
           "val": {
             "before": {
@@ -110,12 +110,12 @@
           },
           "diff": [
             {
-              "act": 0,
+              "type": 0,
               "prop": "key",
               "val": "value"
             },
             {
-              "act": 1,
+              "type": 1,
               "prop": "ops",
               "val": "vops"
             }
@@ -124,7 +124,7 @@
       ]
     },
     {
-      "act": 3,
+      "type": 3,
       "prop": "group1",
       "val": {
         "before": {
@@ -142,7 +142,7 @@
       },
       "diff": [
         {
-          "act": 3,
+          "type": 3,
           "prop": "baz",
           "val": {
             "before": "bas",
@@ -150,12 +150,12 @@
           }
         },
         {
-          "act": 0,
+          "type": 0,
           "prop": "foo",
           "val": "bar"
         },
         {
-          "act": 3,
+          "type": 3,
           "prop": "nest",
           "val": {
             "before": {
@@ -167,14 +167,14 @@
       ]
     },
     {
-      "act": 2,
+      "type": 2,
       "prop": "group2",
       "val": {
         "abc": 12345
       }
     },
     {
-      "act": 1,
+      "type": 1,
       "prop": "group3",
       "val": {
         "fee": 100500
