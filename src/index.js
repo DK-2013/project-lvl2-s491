@@ -1,14 +1,18 @@
 import { readFileSync } from 'fs';
-import { join as getPath } from 'path';
+import { extname, join as getPath } from 'path';
 import genDiff from './gendiff';
-import getParse from './parsers';
+import parse from './parsers';
 import getFormatter from './formatters';
 
+const getDataType = (pathToData) => {
+  const fileExtensionName = extname(pathToData);
+  return fileExtensionName && fileExtensionName.replace('.', '');
+};
 
 const getData = (pathToData) => {
   const rawData = readFileSync(getPath(pathToData), 'utf8');
-  const parse = getParse(pathToData);
-  return parse(rawData);
+  const dataType = getDataType(pathToData);
+  return parse(rawData, dataType);
 };
 
 export default (pathToConfigBefore, pathToConfigAfter, format = 'tree') => {

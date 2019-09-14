@@ -13,10 +13,8 @@ const nodeBuilders = [
     },
     build: (valueBefore, valueAfter, fn) => {
       const diff = fn(valueBefore, valueAfter);
-      return diff.every(({ type }) => type === unchanged)
-        ? { value: valueAfter, type: unchanged }
-        // eslint-disable-next-line object-curly-newline
-        : { valueBefore, valueAfter, diff, type: nested };
+      // eslint-disable-next-line object-curly-newline
+      return { valueBefore, valueAfter, diff, type: nested };
     },
   },
   {
