@@ -6,7 +6,8 @@ import getFormatter from './formatters';
 
 const getDataType = (pathToData) => {
   const fileExtensionName = extname(pathToData);
-  return fileExtensionName && fileExtensionName.replace('.', '');
+  if (!fileExtensionName) throw new Error('Filename must contain extension');
+  return fileExtensionName;
 };
 
 const getData = (pathToData) => {

@@ -13,8 +13,9 @@ const nodeBuilders = [
     },
     build: (valueBefore, valueAfter, fn) => {
       const diff = fn(valueBefore, valueAfter);
-      // eslint-disable-next-line object-curly-newline
-      return { valueBefore, valueAfter, diff, type: nested };
+      return {
+        valueBefore, valueAfter, diff, type: nested,
+      };
     },
   },
   {
@@ -31,7 +32,6 @@ const nodeBuilders = [
   },
   {
     check: () => true,
-    // eslint-disable-next-line object-curly-newline
     build: (valueBefore, valueAfter) => ({ valueBefore, valueAfter, type: updated }),
   },
 ];

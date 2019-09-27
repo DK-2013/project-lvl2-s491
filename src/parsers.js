@@ -3,12 +3,13 @@ import { safeLoad as yamlParse } from 'js-yaml';
 import { parse as iniParse } from 'ini';
 
 const parsers = {
-  json: JSON.parse,
-  yml: yamlParse,
-  ini: iniParse,
+  '.json': JSON.parse,
+  '.yml': yamlParse,
+  '.yaml': yamlParse,
+  '.ini': iniParse,
 };
 
-export default (data, type = 'json') => {
+export default (data, type) => {
   if (has(parsers, type)) {
     return parsers[type](data);
   }
