@@ -11,38 +11,35 @@ const acts = {
   [nested]: 'updated',
 };
 
-const renderProp = ({ type, prop }) => `Property '${prop}' was ${acts[type]}`;
+const renderProp = ({ type }, prop) => `Property '${prop}' was ${acts[type]}`;
 const renderValue = (value) => {
   if (_.isObject(value)) return '[complex value]';
   if (_.isString(value)) return `'${value}'`;
   return value;
 };
-const castToAddedNodes = (parentProp, object) => _.map(object,
-  (value, prop) => ({ type: added, prop: [parentProp, prop].join('.'), value }));
+const getPathToNode = (pathToParent, propName) => [pathToParent, propName].filter(_.identity).join('.');
+const addedObjectRender = (object, path, render) => _.map(object,
+  (value, prop) => render({ type: added, value }, getPathToNode(path, prop))).join('\n');
 
 const renders = {
-  [added]: (node) => {
-    const { prop, value } = node;
-    const toRender = _.isObject(value) ? [].concat(node, castToAddedNodes(prop, value)) : [node];
-    return toRender.map((addedNode) => `${renderProp(addedNode)} with value: ${renderValue(addedNode.value)}`).join('\n');
+  [added]: ({ type, value }, path) => {
+    const addedString = `${renderProp({ type }, path)} with value: ${renderValue(value)}`;
+    if (_.isObject(value)) return [addedString, addedObjectRender(value, path, renders[added])].join('\n');
+    return addedString;
   },
-  [updated]: (node) => {
-    const { prop, valueBefore, valueAfter } = node;
-    const updatedStr = `${renderProp(node)}. From ${renderValue(valueBefore)} to ${renderValue(valueAfter)}`;
-    if (_.isObject(valueAfter)) return [].concat(updatedStr, castToAddedNodes(prop, valueAfter).map(renders[added])).join('\n');
+  [updated]: ({ type, valueBefore, valueAfter }, path) => {
+    const updatedStr = `${renderProp({ type }, path)}. From ${renderValue(valueBefore)} to ${renderValue(valueAfter)}`;
+    if (_.isObject(valueAfter)) return [updatedStr, addedObjectRender(valueAfter, path, renders[added])].join('\n');
     return updatedStr;
   },
-  [nested]: ({ diff, prop: parentProp }, fn) => {
-    const expandChildNodeProp = (propOfParent) => (node) => ({ ...node, prop: [propOfParent, node.prop].join('.') });
-    return fn(diff.map(expandChildNodeProp(parentProp)));
-  },
-  [deleted]: (node) => `${renderProp(node)}`,
+  [nested]: ({ diff }, path, fn) => fn(diff, path),
+  [deleted]: renderProp,
   [unchanged]: () => '',
 };
 
 
-const render = (data) => {
-  const renderNode = (node) => renders[node.type](node, render);
+const render = (data, path) => {
+  const renderNode = (node) => renders[node.type](node, getPathToNode(path, node.prop), render);
   return data.map(renderNode).filter(_.identity).join('\n');
 };
 
