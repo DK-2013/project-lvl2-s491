@@ -11,15 +11,16 @@ const acts = {
   [nested]: 'updated',
 };
 
-const renderProp = ({ type }, prop) => `Property '${prop}' was ${acts[type]}`;
+const renderProp = ({ type }, path) => `Property '${path.join('.')}' was ${acts[type]}`;
 const renderValue = (value) => {
   if (_.isObject(value)) return '[complex value]';
   if (_.isString(value)) return `'${value}'`;
   return value;
 };
-const getPathToNode = (pathToParent, propName) => [pathToParent, propName].filter(_.identity).join('.');
-const addedObjectRender = (object, path, render) => _.map(object,
-  (value, prop) => render({ type: added, value }, getPathToNode(path, prop))).join('\n');
+const addedObjectRender = (object, path, render) => _.map(
+  object,
+  (value, prop) => render({ type: added, value }, [...path, prop]),
+).join('\n');
 
 const renders = {
   [added]: ({ type, value }, path) => {
@@ -38,8 +39,8 @@ const renders = {
 };
 
 
-const render = (data, path) => {
-  const renderNode = (node) => renders[node.type](node, getPathToNode(path, node.prop), render);
+const render = (data, path = []) => {
+  const renderNode = (node) => renders[node.type](node, [...path, node.prop], render);
   return data.map(renderNode).filter(_.identity).join('\n');
 };
 
