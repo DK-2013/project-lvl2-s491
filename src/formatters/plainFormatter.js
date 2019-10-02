@@ -3,38 +3,22 @@ import nodeTypes from '../nodeTypes';
 
 const [unchanged, added, deleted, updated, nested] = nodeTypes;
 
-const acts = {
-  [added]: 'added',
-  [deleted]: 'removed',
-  [unchanged]: ' ',
-  [updated]: 'updated',
-  [nested]: 'updated',
-};
-
-const renderProp = ({ type }, path) => `Property '${path.join('.')}' was ${acts[type]}`;
+const renderProp = (action, path) => `Property '${path.join('.')}' was ${action}`;
 const renderValue = (value) => {
   if (_.isObject(value)) return '[complex value]';
   if (_.isString(value)) return `'${value}'`;
   return value;
 };
-const addedObjectRender = (object, path, render) => _.map(
-  object,
-  (value, prop) => render({ type: added, value }, [...path, prop]),
-).join('\n');
 
 const renders = {
-  [added]: ({ type, value }, path) => {
-    const addedString = `${renderProp({ type }, path)} with value: ${renderValue(value)}`;
-    if (_.isObject(value)) return [addedString, addedObjectRender(value, path, renders[added])].join('\n');
-    return addedString;
-  },
-  [updated]: ({ type, valueBefore, valueAfter }, path) => {
-    const updatedStr = `${renderProp({ type }, path)}. From ${renderValue(valueBefore)} to ${renderValue(valueAfter)}`;
-    if (_.isObject(valueAfter)) return [updatedStr, addedObjectRender(valueAfter, path, renders[added])].join('\n');
-    return updatedStr;
+  [added]: ({ value }, path) => `${renderProp('added', path)} with value: ${renderValue(value)}`,
+  [updated]: ({ valueBefore, valueAfter }, path) => {
+    const renderedValueBefore = renderValue(valueBefore);
+    const renderedValueAfter = renderValue(valueAfter);
+    return `${renderProp('updated', path)}. From ${renderedValueBefore} to ${renderedValueAfter}`;
   },
   [nested]: ({ diff }, path, fn) => fn(diff, path),
-  [deleted]: renderProp,
+  [deleted]: (node, path) => renderProp('removed', path),
   [unchanged]: () => '',
 };
 
