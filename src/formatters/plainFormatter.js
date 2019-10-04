@@ -17,15 +17,15 @@ const renders = {
     const renderedValueAfter = renderValue(valueAfter);
     return `${renderProp('updated', path)}. From ${renderedValueBefore} to ${renderedValueAfter}`;
   },
-  [nested]: ({ diff }, path, fn) => fn(diff, path),
+  [nested]: ({ children }, path, fn) => fn(children, path),
   [deleted]: (node, path) => renderProp('removed', path),
-  [unchanged]: () => '',
+  [unchanged]: () => null,
 };
 
 
-const render = (data, path = []) => {
+const render = (data, path) => {
   const renderNode = (node) => renders[node.type](node, [...path, node.prop], render);
   return data.map(renderNode).filter(_.identity).join('\n');
 };
 
-export default render;
+export default (data) => render(data, []);

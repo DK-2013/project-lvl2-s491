@@ -12,9 +12,9 @@ const nodeBuilders = [
       return _.isObject(valueBefore) && _.isObject(valueAfter);
     },
     build: (valueBefore, valueAfter, fn) => {
-      const diff = fn(valueBefore, valueAfter);
+      const children = fn(valueBefore, valueAfter);
       return {
-        valueBefore, valueAfter, diff, type: nested,
+        valueBefore, valueAfter, children, type: nested,
       };
     },
   },

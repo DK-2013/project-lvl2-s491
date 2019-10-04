@@ -21,9 +21,9 @@ const getRenderEntry = (depth) => ({ prop, value }, prefix) => {
 };
 
 const renders = {
-  [nested]: ({ prop, diff }, depth, fn) => [
+  [nested]: ({ prop, children }, depth, fn) => [
     `${renderProp(prop, depth)}{`,
-    fn(diff, depth + 1),
+    fn(children, depth + 1),
     `${getIndent(depth + 1)}}`,
   ].join('\n'),
   [updated]: ({ prop, valueBefore, valueAfter }, depth) => [
